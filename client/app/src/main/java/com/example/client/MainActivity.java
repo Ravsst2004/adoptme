@@ -1,12 +1,22 @@
 package com.example.client;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.client.api.ApiService;
+import com.example.client.api.RetrofitInstance;
+import com.example.client.model.Pet;
+import com.example.client.model.Result;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +29,29 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        ApiService apiService = RetrofitInstance.getService();
+
+        apiService.getPets().enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Result result = response.body();
+                    Log.d("Response", result.getMessage());
+                    for (Pet pet : result.getData()) {
+                        Log.d("Pet Name", pet.getName());
+                        Log.d("Pet Type", pet.getType());
+                    }
+                } else {
+                    Log.e("API_ERROR", "Response is not successful");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+            }
         });
     }
 }
