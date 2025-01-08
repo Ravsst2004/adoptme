@@ -31,7 +31,6 @@ class PetController extends Controller
     {
         $pet = Pet::find($id);
 
-        // Jika tidak ditemukan, kembalikan respons dengan pesan
         if (!$pet) {
             return response()->json([
                 'status' => false,
@@ -39,12 +38,7 @@ class PetController extends Controller
             ], 404);
         }
 
-        // Jika ditemukan, kembalikan data pet
-        return response()->json([
-            'status' => true,
-            'message' => 'Pet retrieved successfully',
-            'data' => $pet
-        ]);
+        return response()->json($pet);
     }
 
 
