@@ -27,6 +27,27 @@ class PetController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $pet = Pet::find($id);
+
+        // Jika tidak ditemukan, kembalikan respons dengan pesan
+        if (!$pet) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Pet not found'
+            ], 404);
+        }
+
+        // Jika ditemukan, kembalikan data pet
+        return response()->json([
+            'status' => true,
+            'message' => 'Pet retrieved successfully',
+            'data' => $pet
+        ]);
+    }
+
+
     public function store(Request $request)
     {
         try {
@@ -60,9 +81,18 @@ class PetController extends Controller
         }
     }
 
-    public function update(Request $request, Pet $pet)
+    public function update(Request $request, $id)
     {
         try {
+            $pet = Pet::find($id);
+
+            if (!$pet) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Pet not found'
+                ], 404);
+            }
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
@@ -97,6 +127,7 @@ class PetController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy(Pet $pet)
     {
