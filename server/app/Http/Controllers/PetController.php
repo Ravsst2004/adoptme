@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -45,7 +46,7 @@ class PetController extends Controller
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate([
+            $request->validate([
                 'name' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
                 'description' => 'required|string',
@@ -53,19 +54,38 @@ class PetController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = $image->hashName();
-                $image->storeAs('images', $imageName, ['disk' => 'public']);
-                $validated['image'] = asset('/storage/images/' . $imageName);
+                try {
+                    $cloudinaryImage = $request->file('image')->storeOnCloudinary('adoptme');
+                    $url = $cloudinaryImage->getSecurePath();
+                    $publicId = $cloudinaryImage->getPublicId();
+                } catch (\Exception $e) {
+                    Log::error('Error uploading image to Cloudinary: ' . $e->getMessage());
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Failed to upload image'
+                    ], 500);
+                }
             }
 
-            $pet = Pet::create($validated);
+            $pet = Pet::create([
+                'name' => $request->name,
+                'type' => $request->type,
+                'description' => $request->description,
+                'image' => $url,
+                'image_public_id' => $publicId
+            ]);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Pet created successfully',
                 'data' => $pet
             ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Error creating pet: ' . $e->getMessage());
             return response()->json([
@@ -74,6 +94,7 @@ class PetController extends Controller
             ], 500);
         }
     }
+
 
     public function update(Request $request, $id)
     {
@@ -87,27 +108,30 @@ class PetController extends Controller
                 ], 404);
             }
 
-            $validated = $request->validate([
+            $request->validate([
                 'name' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
                 'description' => 'required|string',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
+            $url = $pet->image;
+            $publicId = $pet->image_public_id;
             if ($request->hasFile('image')) {
-                if ($pet->image) {
-                    $imagePath = explode('/', $pet->image);
-                    $imageFileName = end($imagePath);
-                    Storage::disk('public')->delete('images/' . $imageFileName);
-                }
-
-                $image = $request->file('image');
-                $imageName = $image->hashName();
-                $image->storeAs('images', $imageName, ['disk' => 'public']);
-                $validated['image'] = asset('storage/images/' . $imageName);
+                Cloudinary::destroy($pet->image_public_id);
+                $cloudinaryImage = $request->file('image')->storeOnCloudinary('adoptme');
+                $url = $cloudinaryImage->getSecurePath();
+                $publicId = $cloudinaryImage->getPublicId();
             }
 
-            $pet->update($validated);
+            $pet->update([
+                'name' => $request->name,
+                'type' => $request->type,
+                'description' => $request->description,
+                'image' => $url,
+                'image_public_id' => $publicId,
+            ]);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Pet updated successfully',
@@ -122,35 +146,32 @@ class PetController extends Controller
         }
     }
 
-
     public function destroy(Pet $pet)
     {
         try {
-            $imagePath = explode('/', $pet->image);
-            $imageFileName = end($imagePath);
+            $imagePublicId = $pet->image_public_id;
+            $isDeleted = Cloudinary::destroy($imagePublicId);
 
-            if ($imageFileName) {
-                $isImageDeleted = Storage::disk('public')->delete('images/' . $imageFileName);
-            } else {
+            if (!$imagePublicId) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Image not found'
                 ], 404);
             }
 
-            if ($isImageDeleted) {
-                $pet->delete();
+            if (!$isDeleted) {
                 return response()->json([
-                    'status' => true,
-                    'message' => 'Pet deleted successfully',
-                    'data' => $pet
-                ]);
+                    'status' => false,
+                    'message' => 'Failed to delete image'
+                ], 500);
             }
 
+            $pet->delete();
             return response()->json([
-                'status' => false,
-                'message' => 'Failed to delete image'
-            ], 500);
+                'status' => true,
+                'message' => 'Pet deleted successfully',
+                'data' => $pet
+            ]);
         } catch (\Exception $e) {
             Log::error('Error deleting pet: ' . $e->getMessage());
             return response()->json([

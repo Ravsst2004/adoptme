@@ -10,5 +10,5 @@ class Pet extends Model
     /** @use HasFactory<\Database\Factories\PetFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'type', 'image'];
+    protected $fillable = ['name', 'description', 'type', 'image', 'image_public_id'];
 }

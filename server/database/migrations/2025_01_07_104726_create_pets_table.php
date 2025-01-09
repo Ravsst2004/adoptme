@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('type');
             $table->text('image');
+            $table->string('image_public_id')->nullable();
             $table->timestamps();
         });
     }
