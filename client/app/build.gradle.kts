@@ -38,6 +38,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation("androidx.cardview:cardview:1.0.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

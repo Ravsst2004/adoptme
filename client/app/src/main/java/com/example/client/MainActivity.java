@@ -8,17 +8,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.client.adapter.PetAdapter;
 import com.example.client.api.ApiService;
 import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
 import com.example.client.model.Result;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private PetAdapter petAdapter;
+    private List<Pet> petList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +41,25 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        ApiService apiService = RetrofitInstance.getService();
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        petAdapter = new PetAdapter(this, petList);
+        recyclerView.setAdapter(petAdapter);
 
+        fetchPets();
+    }
+
+    private void fetchPets() {
+        ApiService apiService = RetrofitInstance.getService();
         apiService.getPets().enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Result result = response.body();
-                    Log.d("Response", result.getMessage());
-                    for (Pet pet : result.getData()) {
-                        Log.d("Pet Name", pet.getName());
-                        Log.d("Pet Type", pet.getType());
+                    petList.clear();
+                    petList.addAll(response.body().getData());
+                    petAdapter.notifyDataSetChanged();
+                    for (Pet pet : petList) {
+                        Log.d("API_SUCCESS", pet.getImage());
                     }
                 } else {
                     Log.e("API_ERROR", "Response is not successful");
