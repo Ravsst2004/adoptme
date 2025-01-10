@@ -1,7 +1,9 @@
 package com.example.client;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import com.example.client.api.ApiService;
 import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
 import com.example.client.model.Result;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private PetAdapter adapter;
     private List<Pet> petList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
+    FloatingActionButton fabAddPet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +48,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
+        fabAddPet = findViewById(R.id.fabAddPet);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         petList = new ArrayList<>();
         adapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(adapter);
+
+        fabAddPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddPetActivity.class);
+                startActivity(intent);
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -117,8 +117,16 @@ class PetController extends Controller
 
             $url = $pet->image;
             $publicId = $pet->image_public_id;
+
             if ($request->hasFile('image')) {
-                Cloudinary::destroy($pet->image_public_id);
+                if (!empty($publicId)) {
+                    $response = Cloudinary::destroy($publicId);
+
+                    if ($response['result'] !== 'ok') {
+                        Log::error("Failed to delete old image from Cloudinary: " . json_encode($response));
+                    }
+                }
+
                 $cloudinaryImage = $request->file('image')->storeOnCloudinary('adoptme');
                 $url = $cloudinaryImage->getSecurePath();
                 $publicId = $cloudinaryImage->getPublicId();
@@ -145,6 +153,7 @@ class PetController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy(Pet $pet)
     {
