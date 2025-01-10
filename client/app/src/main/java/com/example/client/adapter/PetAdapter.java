@@ -1,19 +1,27 @@
 package com.example.client.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.client.R;
+import com.example.client.UpdatePetActivity;
+import com.example.client.api.ApiService;
+import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
 
 import java.util.List;
@@ -22,10 +30,12 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     private Context context;
     private List<Pet> petList;
     private OnPetEditListener onPetEditListener;
+    private ApiService apiService;
 
     public PetAdapter(Context context, List<Pet> petList) {
         this.context = context;
         this.petList = petList;
+        this.apiService = RetrofitInstance.getService();
     }
 
     public void setOnPetEditListener(OnPetEditListener listener) {
@@ -51,12 +61,49 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                 .into(holder.petImage);
 
         holder.btnEditPet.setOnClickListener(v -> {
-            if (onPetEditListener != null) {
-                onPetEditListener.onEdit(pet);
-            }
+            Intent intent = new Intent(context, UpdatePetActivity.class);
+            intent.putExtra("petId", pet.getId());
+            intent.putExtra("petName", pet.getName());
+            intent.putExtra("petType", pet.getType());
+            intent.putExtra("petDescription", pet.getDescription());
+            intent.putExtra("petImageUri", pet.getImage());
+            context.startActivity(intent);
+        });
+
+        holder.btnDeletePet.setOnClickListener(v -> {
+            holder.btnDeletePet.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.VISIBLE);
+
+            deletePet(pet.getId(), holder);
         });
     }
 
+    private void deletePet(int petId, PetViewHolder holder) {
+        Call<Void> call = apiService.deletePet(petId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                holder.progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, "Pet deleted successfully!", Toast.LENGTH_SHORT).show();
+                    // Remove item from the list after success
+                    petList.remove(holder.getAdapterPosition());
+                    notifyItemRemoved(holder.getAdapterPosition());
+                } else {
+                    // Menampilkan error jika gagal
+                    Toast.makeText(context, "Failed to delete pet", Toast.LENGTH_SHORT).show();
+                    holder.btnDeletePet.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                holder.progressBar.setVisibility(View.GONE);
+                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                holder.btnDeletePet.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
@@ -66,7 +113,8 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     public static class PetViewHolder extends RecyclerView.ViewHolder {
         TextView petName, petType, petDescription;
         ImageView petImage;
-        Button btnEditPet;
+        Button btnEditPet, btnDeletePet;
+        public ProgressBar progressBar;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +123,8 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             petDescription = itemView.findViewById(R.id.petDescription);
             petImage = itemView.findViewById(R.id.petImage);
             btnEditPet = itemView.findViewById(R.id.btnEditPet);
+            btnDeletePet = itemView.findViewById(R.id.btnDeletePet);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 

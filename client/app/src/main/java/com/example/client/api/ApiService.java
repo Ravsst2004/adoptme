@@ -7,6 +7,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -30,7 +31,6 @@ public interface ApiService {
             @Part MultipartBody.Part image
     );
 
-
     @Multipart
     @POST("pets/{id}?_method=PUT")
     Call<Pet> updatePet(
@@ -41,7 +41,8 @@ public interface ApiService {
             @Part MultipartBody.Part image
     );
 
-
-
-
+    @DELETE("pets/{id}")
+    Call<Void> deletePet(
+            @Path("id") int petId
+    );
 }
