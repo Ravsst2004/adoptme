@@ -98,6 +98,8 @@ class PetController extends Controller
 
     public function update(Request $request, $id)
     {
+        Log::info('Received request: ', $request->all());
+
         try {
             $pet = Pet::find($id);
 

@@ -55,6 +55,19 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(adapter);
 
+        adapter.setOnPetEditListener(pet -> {
+            Intent intent = new Intent(this, UpdatePetActivity.class);
+            intent.putExtra("petId", pet.getId());
+            intent.putExtra("petName", pet.getName());
+            intent.putExtra("petType", pet.getType());
+            intent.putExtra("petDescription", pet.getDescription());
+            intent.putExtra("petImageUri", pet.getImage());
+            this.startActivity(intent);
+        });
+
+        recyclerView.setAdapter(adapter);
+
+
         fabAddPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

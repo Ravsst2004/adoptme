@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Gambar saat tombol dalam keadaan normal -->
+    <item android:drawable="@drawable/edit" android:state_enabled="true"/>
+    <!-- Gambar saat tombol ditekan -->
+<!--    <item android:drawable="@drawable/edit_pressed" android:state_pressed="true"/>-->
+</selector>

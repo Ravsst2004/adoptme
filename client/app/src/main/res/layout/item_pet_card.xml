@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
-    android:layout_marginTop="16dp"
     android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp">
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,8 +26,8 @@
             android:id="@+id/petName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pet Name"
             android:paddingTop="10dp"
+            android:text="Pet Name"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -44,14 +44,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:padding="8dp"
             android:background="@drawable/bg_pet_type"
+            android:gravity="center"
+            android:padding="8dp"
             android:text="Pet Type"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnEditPet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_style"
+            android:contentDescription="Edit Pet"
+            android:text="Edit"
+            android:textColor="@color/white" />
 
 
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

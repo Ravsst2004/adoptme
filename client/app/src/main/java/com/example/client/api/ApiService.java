@@ -10,9 +10,12 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface ApiService {
     @GET("pets")
@@ -26,5 +29,19 @@ public interface ApiService {
             @Part("description") RequestBody description,
             @Part MultipartBody.Part image
     );
+
+
+    @Multipart
+    @POST("pets/{id}?_method=PUT")
+    Call<Pet> updatePet(
+            @Path("id") int petId,
+            @Part("name") RequestBody name,
+            @Part("type") RequestBody type,
+            @Part("description") RequestBody description,
+            @Part MultipartBody.Part image
+    );
+
+
+
 
 }
