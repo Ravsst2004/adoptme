@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
 import com.example.client.model.Result;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     FloatingActionButton fabAddPet, fabLogout;
+    TextInputEditText editTextSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         fabAddPet = findViewById(R.id.fabAddPet);
         fabLogout = findViewById(R.id.fabLogout);
+        editTextSearch = findViewById(R.id.editTextSearch);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         petList = new ArrayList<>();
@@ -96,8 +101,19 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                editTextSearch.setText("");
+                searchPets(null);
                 fetchPets();
             }
+        });
+
+        editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String query = v.getText().toString().trim();
+                searchPets(query);
+                return true;
+            }
+            return false;
         });
 
         fetchPets();
@@ -107,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(true);
 
         ApiService apiService = RetrofitInstance.getService(this);
-        apiService.getPets().enqueue(new Callback<Result>() {
+        apiService.getPets(null).enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
                 swipeRefreshLayout.setRefreshing(false);
@@ -124,6 +140,26 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<Result> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
                 Log.e("API_ERROR", "Error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void searchPets(String type) {
+        ApiService apiService = RetrofitInstance.getService(this);
+        apiService.getPets(type).enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Pet> pets = response.body().getData();
+                    adapter.setPets(pets);
+                } else {
+                    Toast.makeText(MainActivity.this, "No pets found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Failed to fetch pets: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -44,6 +44,11 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         this.isAdmin = prefs.getBoolean("isAdmin", false);
     }
 
+    public void setPets(List<Pet> pets) {
+        this.petList = pets;
+        notifyDataSetChanged();
+    }
+
     public void setOnPetEditListener(OnPetEditListener listener) {
         this.onPetEditListener = listener;
     }
