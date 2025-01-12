@@ -100,6 +100,7 @@ public class AddPetActivity extends AppCompatActivity {
         }
 
         progressBar.setVisibility(View.VISIBLE);
+        btnSavePet.setVisibility(View.GONE);
 
         RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), petName);
         RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), petType);
@@ -119,6 +120,7 @@ public class AddPetActivity extends AppCompatActivity {
                     Pet pet = response.body();
 
                     progressBar.setVisibility(View.GONE);
+                    btnSavePet.setVisibility(View.VISIBLE);
 
                     if (response.isSuccessful()) {
                         Toast.makeText(AddPetActivity.this, "Pet added successfully!", Toast.LENGTH_SHORT).show();

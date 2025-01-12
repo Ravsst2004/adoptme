@@ -10,23 +10,30 @@ use Illuminate\Support\Facades\Storage;
 
 class PetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pets = Pet::latest()->get();
 
-        if (empty($pets)) {
+        $type = $request->query('type');
+        if ($type) {
+            $pets = Pet::where('type', $type)->latest()->get();
+        } else {
+            $pets = Pet::latest()->get();
+        }
+
+        if ($pets->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'message' => 'No pets found'
-            ]);
+                'message' => $type ? "No pets found for type: $type" : 'No pets found',
+            ], 404);
         }
 
         return response()->json([
             'status' => true,
             'message' => 'Pets retrieved successfully',
-            'data' => $pets
+            'data' => $pets,
         ]);
     }
+
 
     public function show($id)
     {

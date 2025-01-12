@@ -118,11 +118,6 @@ public class UpdatePetActivity extends AppCompatActivity {
             startActivityForResult(pickImage, IMAGE_PICK_REQUEST);
         });
 
-        btnChooseImage.setOnClickListener(v -> {
-            Intent pickImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(pickImage, IMAGE_PICK_REQUEST);
-        });
-
         btnUpdatePet.setOnClickListener(v -> updatePet());
     }
 
@@ -147,6 +142,7 @@ public class UpdatePetActivity extends AppCompatActivity {
         }
 
         progressBar.setVisibility(View.VISIBLE);
+        btnUpdatePet.setVisibility(View.GONE);
 
         RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), petName.isEmpty() ? "" : petName);
         RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), petType.isEmpty() ? "" : petType);
@@ -166,6 +162,7 @@ public class UpdatePetActivity extends AppCompatActivity {
             public void onResponse(Call<Pet> call, Response<Pet> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     progressBar.setVisibility(View.GONE);
+                    btnUpdatePet.setVisibility(View.VISIBLE);
 
                     Toast.makeText(UpdatePetActivity.this, "Pet updated successfully!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(UpdatePetActivity.this, MainActivity.class);

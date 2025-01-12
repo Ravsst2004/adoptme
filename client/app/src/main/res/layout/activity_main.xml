@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -46,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="Add Pet"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@drawable/icon_plus"
         app:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,8 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="Logout"
-        android:src="@drawable/ic_launcher_background"
-        app:backgroundTint="@color/material_dynamic_tertiary30"
+        android:src="@drawable/icon_logout"
+        app:backgroundTint="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="@android:color/white" />

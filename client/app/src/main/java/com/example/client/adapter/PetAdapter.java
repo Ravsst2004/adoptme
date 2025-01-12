@@ -85,7 +85,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         holder.btnDeletePet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         holder.btnDeletePet.setOnClickListener(v -> {
             holder.btnDeletePet.setVisibility(View.GONE);
-            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.progressBarDelete.setVisibility(View.VISIBLE);
 
             deletePet(pet.getId(), holder);
         });
@@ -96,7 +96,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                holder.progressBar.setVisibility(View.GONE);
+                holder.progressBarDelete.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     Toast.makeText(context, "Pet deleted successfully!", Toast.LENGTH_SHORT).show();
                     // Remove item from the list after success
@@ -111,7 +111,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                holder.progressBar.setVisibility(View.GONE);
+                holder.progressBarDelete.setVisibility(View.GONE);
                 Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 holder.btnDeletePet.setVisibility(View.VISIBLE);
             }
@@ -127,7 +127,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         TextView petName, petType, petDescription;
         ImageView petImage;
         Button btnEditPet, btnDeletePet;
-        public ProgressBar progressBar;
+        public ProgressBar progressBarDelete;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -137,7 +137,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             petImage = itemView.findViewById(R.id.petImage);
             btnEditPet = itemView.findViewById(R.id.btnEditPet);
             btnDeletePet = itemView.findViewById(R.id.btnDeletePet);
-            progressBar = itemView.findViewById(R.id.progressBar);
+            progressBarDelete = itemView.findViewById(R.id.progressBarDelete);
         }
     }
 
