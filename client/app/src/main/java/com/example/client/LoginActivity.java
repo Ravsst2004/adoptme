@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
-        apiService = RetrofitInstance.getService();
+        apiService = RetrofitInstance.getService(this);
 
         btnLogin.setOnClickListener(v -> login());
     }

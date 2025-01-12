@@ -1,6 +1,7 @@
 package com.example.client;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +51,16 @@ public class UpdatePetActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        if (!prefs.contains("token")) {
+            Intent intent = new Intent(UpdatePetActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_update_pet);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -66,7 +77,7 @@ public class UpdatePetActivity extends AppCompatActivity {
         btnUpdatePet = findViewById(R.id.btnUpdatePet);
         progressBar = findViewById(R.id.progressBar);
 
-        apiService = RetrofitInstance.getService();
+        apiService = RetrofitInstance.getService(this);
 
         Intent intent = getIntent();
         petId = intent.getIntExtra("petId", -1);

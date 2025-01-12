@@ -5,6 +5,8 @@ import android.content.Intent;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +33,15 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     private List<Pet> petList;
     private OnPetEditListener onPetEditListener;
     private ApiService apiService;
+    SharedPreferences prefs;
+    boolean isAdmin;
 
     public PetAdapter(Context context, List<Pet> petList) {
         this.context = context;
         this.petList = petList;
-        this.apiService = RetrofitInstance.getService();
+        this.apiService = RetrofitInstance.getService(this.context);
+        this.prefs = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        this.isAdmin = prefs.getBoolean("isAdmin", false);
     }
 
     public void setOnPetEditListener(OnPetEditListener listener) {
@@ -60,6 +66,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(holder.petImage);
 
+        holder.btnEditPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         holder.btnEditPet.setOnClickListener(v -> {
             Intent intent = new Intent(context, UpdatePetActivity.class);
             intent.putExtra("petId", pet.getId());
@@ -70,6 +77,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             context.startActivity(intent);
         });
 
+        holder.btnDeletePet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         holder.btnDeletePet.setOnClickListener(v -> {
             holder.btnDeletePet.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.VISIBLE);

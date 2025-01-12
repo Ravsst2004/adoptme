@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private void fetchPets() {
         swipeRefreshLayout.setRefreshing(true);
 
-        ApiService apiService = RetrofitInstance.getService();
+        ApiService apiService = RetrofitInstance.getService(this);
         apiService.getPets().enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
