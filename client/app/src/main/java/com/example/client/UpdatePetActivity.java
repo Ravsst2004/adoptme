@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -99,6 +100,23 @@ public class UpdatePetActivity extends AppCompatActivity {
         } else {
             ivPetImage.setImageResource(R.drawable.ic_launcher_background);
         }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.pet_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPetType.setAdapter(adapter);
+
+        if (petType != null) {
+            int spinnerPosition = adapter.getPosition(petType);
+            if (spinnerPosition >= 0) {
+                spinnerPetType.setSelection(spinnerPosition);
+            }
+        }
+
+        btnChooseImage.setOnClickListener(v -> {
+            Intent pickImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickImage, IMAGE_PICK_REQUEST);
+        });
 
         btnChooseImage.setOnClickListener(v -> {
             Intent pickImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

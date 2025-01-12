@@ -74,14 +74,12 @@ public class LoginActivity extends AppCompatActivity {
                     Login loginResponse = response.body();
 
                     if (loginResponse.isStatus()) {
-                        // Simpan token dan is_admin ke SharedPreferences
                         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                         prefs.edit()
                                 .putString("token", loginResponse.getData().getToken())
                                 .putBoolean("isAdmin", loginResponse.getData().getUser().isAdmin())
                                 .apply();
 
-                        // Pindah ke MainActivity
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
