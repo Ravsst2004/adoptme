@@ -53,5 +53,4 @@ public interface ApiService {
             @Part("email") RequestBody email,
             @Part("password") RequestBody password
     );
-
 }

@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private PetAdapter adapter;
     private List<Pet> petList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
-    FloatingActionButton fabAddPet;
+
+    FloatingActionButton fabAddPet, fabLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        String isToken = prefs.getString("token", null);
         if (!prefs.contains("token")) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -60,11 +62,26 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         fabAddPet = findViewById(R.id.fabAddPet);
+        fabLogout = findViewById(R.id.fabLogout);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         petList = new ArrayList<>();
         adapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(adapter);
+
+        fabLogout.setVisibility(isToken != null ? View.VISIBLE : View.GONE);
+
+        fabLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
 
