@@ -6,28 +6,46 @@ use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+            ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User registered successfully',
-            'data' => $user,
-        ], 201);
+            Log::info('User created successfully', ['user' => $user]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User registered successfully',
+                'data' => $user,
+            ], 201);
+        } catch (ValidationException $e) {
+            Log::error('Validation error creating user', ['errors' => $e->getMessage()]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error'
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error creating user', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Internal Server Error',
+            ], 500);
+        }
     }
 
     public function login(Request $request)

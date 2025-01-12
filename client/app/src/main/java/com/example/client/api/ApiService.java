@@ -1,5 +1,6 @@
 package com.example.client.api;
 
+import com.example.client.model.Login;
 import com.example.client.model.Pet;
 import com.example.client.model.Result;
 
@@ -45,4 +46,12 @@ public interface ApiService {
     Call<Void> deletePet(
             @Path("id") int petId
     );
+
+    @Multipart
+    @POST("login")
+    Call<Login> login(
+            @Part("email") RequestBody email,
+            @Part("password") RequestBody password
+    );
+
 }

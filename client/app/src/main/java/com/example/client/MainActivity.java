@@ -1,6 +1,7 @@
 package com.example.client;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        if (!prefs.contains("token")) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.swipeRefreshLayout), (v, insets) -> {
@@ -54,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         petList = new ArrayList<>();
         adapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(adapter);
+
+        fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
 
         fabAddPet.setOnClickListener(new View.OnClickListener() {
             @Override
