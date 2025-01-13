@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.client.DetailPetActivity;
 import com.example.client.R;
 import com.example.client.UpdatePetActivity;
 import com.example.client.api.ApiService;
@@ -89,6 +90,12 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
             deletePet(pet.getId(), holder);
         });
+
+        holder.btnSeeDetail.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailPetActivity.class);
+            intent.putExtra("petId", pet.getId());
+            context.startActivity(intent);
+        });
     }
 
     private void deletePet(int petId, PetViewHolder holder) {
@@ -99,11 +106,9 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                 holder.progressBarDelete.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     Toast.makeText(context, "Pet deleted successfully!", Toast.LENGTH_SHORT).show();
-                    // Remove item from the list after success
                     petList.remove(holder.getAdapterPosition());
                     notifyItemRemoved(holder.getAdapterPosition());
                 } else {
-                    // Menampilkan error jika gagal
                     Toast.makeText(context, "Failed to delete pet", Toast.LENGTH_SHORT).show();
                     holder.btnDeletePet.setVisibility(View.VISIBLE);
                 }
@@ -126,7 +131,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     public static class PetViewHolder extends RecyclerView.ViewHolder {
         TextView petName, petType, petDescription;
         ImageView petImage;
-        Button btnEditPet, btnDeletePet;
+        Button btnEditPet, btnDeletePet, btnSeeDetail;
         public ProgressBar progressBarDelete;
 
         public PetViewHolder(@NonNull View itemView) {
@@ -138,6 +143,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             btnEditPet = itemView.findViewById(R.id.btnEditPet);
             btnDeletePet = itemView.findViewById(R.id.btnDeletePet);
             progressBarDelete = itemView.findViewById(R.id.progressBarDelete);
+            btnSeeDetail = itemView.findViewById(R.id.btnDetail);
         }
     }
 
