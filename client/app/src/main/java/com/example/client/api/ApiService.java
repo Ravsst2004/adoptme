@@ -2,6 +2,7 @@ package com.example.client.api;
 
 import com.example.client.model.Login;
 import com.example.client.model.Pet;
+import com.example.client.model.Register;
 import com.example.client.model.Result;
 
 import okhttp3.MultipartBody;
@@ -54,4 +55,13 @@ public interface ApiService {
             @Part("email") RequestBody email,
             @Part("password") RequestBody password
     );
+
+    @Multipart
+    @POST("register")
+    Call<Register> register(
+            @Part("name") RequestBody name,
+            @Part("email") RequestBody email,
+            @Part("password") RequestBody password
+    );
+
 }
