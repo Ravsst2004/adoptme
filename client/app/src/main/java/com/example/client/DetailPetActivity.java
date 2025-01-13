@@ -1,6 +1,9 @@
 package com.example.client;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.client.api.ApiService;
 import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,11 +28,23 @@ public class DetailPetActivity extends AppCompatActivity {
     private TextView petName, petDescription, petType;
     private ImageView petImage;
     private ApiService apiService;
+    FloatingActionButton fabAddPet, fabProfile, fabLogout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        String isToken = prefs.getString("token", null);
+        if (!prefs.contains("token")) {
+            Intent intent = new Intent(DetailPetActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detail_pet);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.detailPetActivity), (v, insets) -> {
@@ -41,6 +57,9 @@ public class DetailPetActivity extends AppCompatActivity {
         petDescription = findViewById(R.id.tvPetDescription);
         petType = findViewById(R.id.tvPetType);
         petImage = findViewById(R.id.ivPetImage);
+        fabAddPet = findViewById(R.id.fabAddPet);
+        fabProfile = findViewById(R.id.fabProfile);
+        fabLogout = findViewById(R.id.fabLogout);
 
         apiService = RetrofitInstance.getService(this);
 
@@ -51,6 +70,39 @@ public class DetailPetActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid Pet ID", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        fabProfile.setVisibility(!isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+        fabLogout.setVisibility(isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+
+
+        fabAddPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailPetActivity.this, AddPetActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        fabProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailPetActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        fabLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(DetailPetActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
     }
 
