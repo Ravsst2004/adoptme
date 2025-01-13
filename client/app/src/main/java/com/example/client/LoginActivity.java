@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private Button btnLogin;
+    private ProgressBar progressBar;
     private TextView tvRegister;
     private ApiService apiService;
 
@@ -49,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
+        progressBar = findViewById(R.id.progressBar);
 
         apiService = RetrofitInstance.getService(this);
 
@@ -77,12 +81,18 @@ public class LoginActivity extends AppCompatActivity {
         RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
         RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password);
 
+        progressBar.setVisibility(View.VISIBLE);
+        btnLogin.setVisibility(View.GONE);
+
         Call<Login> call = apiService.login(emailBody, passwordBody);
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Login loginResponse = response.body();
+
+                    progressBar.setVisibility(View.GONE);
+                    btnLogin.setVisibility(View.VISIBLE);
 
                     if (loginResponse.isStatus()) {
                         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);

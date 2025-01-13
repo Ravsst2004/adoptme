@@ -102,9 +102,6 @@ public class RegisterActivity extends AppCompatActivity {
                             String errorBody = response.errorBody().string();
                             JSONObject errorJson = new JSONObject(errorBody);
 
-                            String message = errorJson.optString("message", "Registration failed");
-                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
-
                             JSONObject errors = errorJson.optJSONObject("errors");
                             if (errors != null) {
                                 etName.setError(null);
