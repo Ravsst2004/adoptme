@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Pet> petList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    FloatingActionButton fabAddPet, fabLogout;
+    FloatingActionButton fabAddPet, fabProfile, fabLogout;
     TextInputEditText editTextSearch;
 
     @Override
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         fabAddPet = findViewById(R.id.fabAddPet);
+        fabProfile = findViewById(R.id.fabProfile);
         fabLogout = findViewById(R.id.fabLogout);
         editTextSearch = findViewById(R.id.editTextSearch);
         recyclerView = findViewById(R.id.recyclerView);
@@ -74,7 +75,27 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(adapter);
 
-        fabLogout.setVisibility(isToken != null ? View.VISIBLE : View.GONE);
+
+        fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        fabProfile.setVisibility(!isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+        fabLogout.setVisibility(isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+
+
+        fabAddPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddPetActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        fabProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
         fabLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,16 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
-            }
-        });
-
-        fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-
-        fabAddPet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddPetActivity.class);
-                startActivity(intent);
             }
         });
 

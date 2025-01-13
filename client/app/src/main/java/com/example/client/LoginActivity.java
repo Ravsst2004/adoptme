@@ -97,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (loginResponse.isStatus()) {
                         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                         prefs.edit()
+                                .putString("name", loginResponse.getData().getUser().getName())
+                                .putString("email", loginResponse.getData().getUser().getEmail())
                                 .putString("token", loginResponse.getData().getToken())
                                 .putBoolean("isAdmin", loginResponse.getData().getUser().isAdmin())
                                 .apply();

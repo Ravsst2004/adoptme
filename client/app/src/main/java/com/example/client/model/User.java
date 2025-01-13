@@ -6,6 +6,14 @@ public class User {
     private String email;
     private int is_admin;
 
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public boolean isAdmin() {
         return is_admin == 1;
     }
