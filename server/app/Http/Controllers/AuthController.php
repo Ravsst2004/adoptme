@@ -37,7 +37,6 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Validation error',
                 'errors' => $errors,
             ], 422);
         } catch (\Exception $e) {
@@ -82,7 +81,6 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Validation error',
                 'errors' => $errors,
             ], 422);
         } catch (\Exception $e) {
