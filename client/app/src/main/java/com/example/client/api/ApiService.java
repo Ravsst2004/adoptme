@@ -77,4 +77,9 @@ public interface ApiService {
             @Header("Authorization") String token
     );
 
+    @DELETE("booking/{bookingId}")
+    Call<Void> deleteBooking(
+            @Path("bookingId") int bookingId
+    );
+
 }

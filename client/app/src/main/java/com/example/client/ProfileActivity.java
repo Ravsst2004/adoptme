@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView ivPetImage;
     Button btnDeleteBooking;
     ApiService apiService;
+    LinearLayout llCardBookedPet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvPetType = findViewById(R.id.tvPetType);
         ivPetImage = findViewById(R.id.ivPetImage);
         btnDeleteBooking = findViewById(R.id.btnDeleteBooking);
+        llCardBookedPet = findViewById(R.id.llCardBookedPet);
         apiService = RetrofitInstance.getService(this);
 
         tvName.setText(name);
@@ -98,9 +101,16 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        btnDeleteBooking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchBookingAndDeletePet(userId, isToken);
+            }
+        });
     }
 
-    private void fetchBookingAndPetData(int userId, String token) {
+    private void fetchBookingAndDeletePet(int userId, String token) {
         Call<Booking> bookingCall = apiService.getUserBooking(userId, "Bearer " + token);
 
         bookingCall.enqueue(new Callback<Booking>() {
@@ -108,11 +118,8 @@ public class ProfileActivity extends AppCompatActivity {
             public void onResponse(Call<Booking> call, Response<Booking> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Booking booking = response.body();
-
-                    int petId = booking.getData().getPet_id();
-                    fetchPetDetails(petId);
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Failed to fetch booking data.", Toast.LENGTH_SHORT).show();
+                    int bookingId = booking.getData().getId();
+                    deleteBooking(bookingId, token);
                 }
             }
 
@@ -123,6 +130,54 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteBooking(int bookingId, String token) {
+        Call<Void> deleteCall = apiService.deleteBooking(bookingId);
+
+        deleteCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ProfileActivity.this, "Booking deleted successfully.", Toast.LENGTH_SHORT).show();
+                    clearPetDetails();
+                    llCardBookedPet.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Failed to delete booking.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void fetchBookingAndPetData(int userId, String token) {
+        Call<Booking> bookingCall = apiService.getUserBooking(userId, "Bearer " + token);
+
+        bookingCall.enqueue(new Callback<Booking>() {
+            @Override
+            public void onResponse(Call<Booking> call, Response<Booking> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    Booking booking = response.body();
+                    int petId = booking.getData().getPet_id();
+                    fetchPetDetails(petId);
+                } else {
+                    llCardBookedPet.setVisibility(View.GONE);
+                    clearPetDetails();
+                    Toast.makeText(ProfileActivity.this, "No booking data available.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Booking> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void fetchPetDetails(int petId) {
         Call<Pet> petCall = apiService.getPet(petId);
 
@@ -131,9 +186,9 @@ public class ProfileActivity extends AppCompatActivity {
             public void onResponse(Call<Pet> call, Response<Pet> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Pet pet = response.body();
-
                     displayPetDetails(pet);
                 } else {
+                    clearPetDetails();
                     Toast.makeText(ProfileActivity.this, "Failed to fetch pet details.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -149,9 +204,13 @@ public class ProfileActivity extends AppCompatActivity {
         tvPetName.setText(pet.getName());
         tvPetDescription.setText(pet.getDescription());
         tvPetType.setText(pet.getType());
-
         Glide.with(this).load(pet.getImage()).into(ivPetImage);
     }
 
-
+    private void clearPetDetails() {
+        tvPetName.setText("");
+        tvPetDescription.setText("");
+        tvPetType.setText("");
+        ivPetImage.setImageResource(0);
+    }
 }
