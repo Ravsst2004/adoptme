@@ -8,6 +8,37 @@ use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
+
+    public function show(Request $request)
+    {
+        Log::info('Received show booking request: ', $request->all());
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $userId = $request->user_id;
+
+        $booking = Booking::where('user_id', $userId)->first();
+
+        if (!$booking) {
+            Log::warning('Booking not found for user ID: ' . $userId);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Booking Not Found.',
+            ]);
+        }
+
+        Log::info('Booking found for user ID: ' . $userId);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Bookings retrieved successfully.',
+            'data' => $booking,
+        ]);
+    }
+
     public function store(Request $request)
     {
         Log::info('Received booking request: ', $request->all());

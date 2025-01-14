@@ -12,7 +12,8 @@ Route::post('pets', [PetController::class, 'store'])->middleware(['auth:sanctum'
 Route::put('pets/{id}', [PetController::class, 'update'])->middleware(['auth:sanctum', 'admin']);
 Route::delete('pets/{pet}', [PetController::class, 'destroy'])->middleware(['auth:sanctum', 'admin']);
 
-Route::post('pets/booking', [BookingController::class, 'store'])->middleware(['auth:sanctum']);
+Route::get('booking', [BookingController::class, 'show'])->middleware(['auth:sanctum']);
+Route::post('booking', [BookingController::class, 'store'])->middleware(['auth:sanctum']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
