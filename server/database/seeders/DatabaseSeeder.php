@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Booking;
 use App\Models\Pet;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,22 +17,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Pet::factory(2)->create();
-        User::factory(3)->create();
+        Pet::factory(10)->create();
+        User::factory(5)->create();
 
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
-            'is_admin' => true
+            'is_admin' => true,
         ]);
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Not Admin',
             'email' => 'notadmin@gmail.com',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
-            'is_admin' => false
+            'is_admin' => false,
         ]);
+
+        $pets = Pet::all();
+        foreach ($pets as $pet) {
+            if (rand(0, 1)) {
+                Booking::factory()->create([
+                    'user_id' => $user->id,
+                    'pet_id' => $pet->id,
+                    'status' => rand(0, 1) ? 'active' : 'canceled',
+                ]);
+            }
+        }
     }
 }
