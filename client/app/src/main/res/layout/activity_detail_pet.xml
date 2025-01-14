@@ -72,6 +72,13 @@
                     android:background="@drawable/bg_pet_type"
                     android:textColor="@android:color/white" />
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone" />
+
                 <Button
                     android:id="@+id/btnBooked"
                     android:layout_width="match_parent"
@@ -82,6 +89,9 @@
                     android:background="@drawable/bg_pet_type"
                     android:textColor="@android:color/white"
                     android:visibility="gone" />
+
+
+
 
 
             </LinearLayout>

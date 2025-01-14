@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     Button btnDeleteBooking;
     ApiService apiService;
     LinearLayout llCardBookedPet;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         ivPetImage = findViewById(R.id.ivPetImage);
         btnDeleteBooking = findViewById(R.id.btnDeleteBooking);
         llCardBookedPet = findViewById(R.id.llCardBookedPet);
+        progressBar = findViewById(R.id.progressBar);
         apiService = RetrofitInstance.getService(this);
 
         tvName.setText(name);
@@ -113,6 +116,9 @@ public class ProfileActivity extends AppCompatActivity {
     private void fetchBookingAndDeletePet(int userId, String token) {
         Call<Booking> bookingCall = apiService.getUserBooking(userId, "Bearer " + token);
 
+        progressBar.setVisibility(View.VISIBLE);
+        btnDeleteBooking.setVisibility(View.GONE);
+
         bookingCall.enqueue(new Callback<Booking>() {
             @Override
             public void onResponse(Call<Booking> call, Response<Booking> response) {
@@ -137,6 +143,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    progressBar.setVisibility(View.GONE);
+                    btnDeleteBooking.setVisibility(View.VISIBLE);
+
                     Toast.makeText(ProfileActivity.this, "Booking deleted successfully.", Toast.LENGTH_SHORT).show();
                     clearPetDetails();
                     llCardBookedPet.setVisibility(View.GONE);

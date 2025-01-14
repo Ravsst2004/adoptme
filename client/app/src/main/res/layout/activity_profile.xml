@@ -33,7 +33,6 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Floating Action Button: Home -->
-
     <LinearLayout
         android:id="@+id/llCardBookedPet"
         android:layout_width="match_parent"
@@ -101,6 +100,13 @@
                     android:background="@drawable/bg_pet_type"
                     android:text="Delete Booking"
                     android:textColor="@android:color/white" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btnBooked"

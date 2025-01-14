@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ public class DetailPetActivity extends AppCompatActivity {
     private ImageView petImage;
     private ApiService apiService;
     private Button btnBookPet, btnBooked;
+    private ProgressBar progressBar;
     FloatingActionButton fabAddPet, fabProfile, fabLogout;
 
 
@@ -69,6 +71,7 @@ public class DetailPetActivity extends AppCompatActivity {
         fabLogout = findViewById(R.id.fabLogout);
         btnBookPet = findViewById(R.id.btnBookPet);
         btnBooked = findViewById(R.id.btnBooked);
+        progressBar = findViewById(R.id.progressBar);
 
         apiService = RetrofitInstance.getService(this);
 
@@ -194,11 +197,17 @@ public class DetailPetActivity extends AppCompatActivity {
         RequestBody petIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(petId));
         RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(userId));
 
+        progressBar.setVisibility(View.VISIBLE);
+        btnBookPet.setVisibility(View.GONE);
+
         Call<Booking> call = apiService.bookingPet(petIdBody, userIdBody);
         call.enqueue(new Callback<Booking>() {
             @Override
             public void onResponse(Call<Booking> call, Response<Booking> response) {
                 Booking booking = response.body();
+
+                progressBar.setVisibility(View.GONE);
+                btnBookPet.setVisibility(View.VISIBLE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     Toast.makeText(DetailPetActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
