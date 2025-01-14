@@ -11,31 +11,41 @@ class BookingController extends Controller
 
     public function show(Request $request)
     {
-        Log::info('Received show booking request: ', $request->all());
+        $userId = $request->query('user_id');
 
-        $request->validate([
-            'user_id' => 'required|exists:users,id'
-        ]);
+        Log::info('Received show booking request: ', compact('userId'));
 
-        $userId = $request->user_id;
+        if ($userId) {
+            $request->validate([
+                'user_id' => 'required|exists:users,id'
+            ]);
 
-        $booking = Booking::where('user_id', $userId)->first();
+            $booking = Booking::where('user_id', $userId)->first();
 
-        if (!$booking) {
-            Log::warning('Booking not found for user ID: ' . $userId);
+            if (!$booking) {
+                Log::warning('Booking not found for user ID: ' . $userId);
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Booking Not Found.',
+                ]);
+            }
+
+            Log::info('Booking found for user ID: ' . $userId);
 
             return response()->json([
-                'status' => false,
-                'message' => 'Booking Not Found.',
+                'status' => true,
+                'message' => 'Bookings retrieved successfully.',
+                'data' => $booking,
             ]);
         }
 
-        Log::info('Booking found for user ID: ' . $userId);
+        $bookings = Booking::all();
 
         return response()->json([
             'status' => true,
             'message' => 'Bookings retrieved successfully.',
-            'data' => $booking,
+            'data' => $bookings,
         ]);
     }
 
