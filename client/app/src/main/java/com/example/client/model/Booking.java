@@ -21,6 +21,7 @@ public class Booking {
         private int id;
         private int user_id;
         private int pet_id;
+        private String status;
 
         public int getId() {
             return id;
@@ -44,6 +45,10 @@ public class Booking {
 
         public void setPet_id(int pet_id) {
             this.pet_id = pet_id;
+        }
+
+        public String getStatus() {
+            return status;
         }
     }
 }

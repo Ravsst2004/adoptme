@@ -3,6 +3,7 @@ package com.example.client;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,7 +33,7 @@ public class DetailPetActivity extends AppCompatActivity {
     private TextView petName, petDescription, petType;
     private ImageView petImage;
     private ApiService apiService;
-    private Button btnBookPet;
+    private Button btnBookPet, btnBooked;
     FloatingActionButton fabAddPet, fabProfile, fabLogout;
 
 
@@ -67,12 +68,14 @@ public class DetailPetActivity extends AppCompatActivity {
         fabProfile = findViewById(R.id.fabProfile);
         fabLogout = findViewById(R.id.fabLogout);
         btnBookPet = findViewById(R.id.btnBookPet);
+        btnBooked = findViewById(R.id.btnBooked);
 
         apiService = RetrofitInstance.getService(this);
 
         int petId = getIntent().getIntExtra("petId", -1);
         if (petId != -1) {
             getPetDetails(petId);
+            getBookedPet(userId, petId, isToken);
         } else {
             Toast.makeText(this, "Invalid Pet ID", Toast.LENGTH_SHORT).show();
             finish();
@@ -81,6 +84,7 @@ public class DetailPetActivity extends AppCompatActivity {
         fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         fabProfile.setVisibility(!isAdmin && isToken != null ? View.VISIBLE : View.GONE);
         fabLogout.setVisibility(isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+        btnBookPet.setVisibility(!isAdmin && isToken != null ? View.VISIBLE : View.GONE);
 
 
         fabAddPet.setOnClickListener(new View.OnClickListener() {
@@ -115,10 +119,53 @@ public class DetailPetActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bookingPet(petId, userId);
+                getBookedPet(userId, petId, isToken);
             }
         });
 
     }
+
+    private void getBookedPet(int userId, int petId, String isToken) {
+        Call<Booking> call = apiService.getUserBooking(userId, "Bearer " + isToken);
+        call.enqueue(new Callback<Booking>() {
+            @Override
+            public void onResponse(Call<Booking> call, Response<Booking> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Booking booking = response.body();
+
+                    if (booking.getData() != null) {
+                        int bookedPetId = booking.getData().getPet_id();
+                        int currentPetId = petId;
+
+                        if (bookedPetId == currentPetId) {
+                            btnBookPet.setVisibility(View.GONE);
+                            btnBooked.setVisibility(View.VISIBLE);
+                        } else {
+                            btnBookPet.setVisibility(View.GONE);
+                            btnBooked.setVisibility(View.GONE);
+                        }
+                    } else {
+                        btnBookPet.setVisibility(View.VISIBLE);
+                        btnBooked.setVisibility(View.GONE);
+                    }
+                }else {
+                    btnBookPet.setVisibility(View.GONE);
+                    btnBooked.setVisibility(View.VISIBLE);
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<Booking> call, Throwable t) {
+                Toast.makeText(DetailPetActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                btnBookPet.setVisibility(View.VISIBLE);
+                btnBooked.setVisibility(View.GONE);
+            }
+        });
+    }
+
+
+
 
     private void getPetDetails(int petId) {
         Call<Pet> call = apiService.getPet(petId);
@@ -158,8 +205,10 @@ public class DetailPetActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     Toast.makeText(DetailPetActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(DetailPetActivity.this, ProfileActivity.class);
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(DetailPetActivity.this, "Booking failed! " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailPetActivity.this, "Booking failed!, Already Booked", Toast.LENGTH_SHORT).show();
                 }
             }
 

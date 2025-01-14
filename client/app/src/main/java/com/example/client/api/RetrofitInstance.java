@@ -26,7 +26,7 @@ public class RetrofitInstance {
                             String url = originalRequest.url().toString();
                             String method = originalRequest.method();
 
-                            boolean requiresAuth = url.contains("pets") &&
+                            boolean requiresAuth = (url.contains("pets") || url.contains("booking")) &&
                                     (method.equals("POST") || method.equals("PUT") || method.equals("DELETE"));
 
                             Request.Builder requestBuilder = originalRequest.newBuilder();

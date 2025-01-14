@@ -109,6 +109,8 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else {
                         Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
                     }
                 } else {
                     try {
@@ -118,6 +120,9 @@ public class LoginActivity extends AppCompatActivity {
 
                             String message = errorJson.optString("message", "Login failed");
                             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                            progressBar.setVisibility(View.GONE);
+                            btnLogin.setVisibility(View.VISIBLE);
 
                             JSONObject errors = errorJson.optJSONObject("errors");
                             if (errors != null) {
@@ -134,6 +139,8 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -141,6 +148,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                btnLogin.setVisibility(View.VISIBLE);
             }
         });
     }

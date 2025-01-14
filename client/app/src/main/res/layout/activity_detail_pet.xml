@@ -72,6 +72,17 @@
                     android:background="@drawable/bg_pet_type"
                     android:textColor="@android:color/white" />
 
+                <Button
+                    android:id="@+id/btnBooked"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/design_default_color_primary_variant"
+                    android:text="Booked"
+                    android:background="@drawable/bg_pet_type"
+                    android:textColor="@android:color/white"
+                    android:visibility="gone" />
+
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
