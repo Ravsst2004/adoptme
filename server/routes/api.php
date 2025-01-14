@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,10 +12,7 @@ Route::post('pets', [PetController::class, 'store'])->middleware(['auth:sanctum'
 Route::put('pets/{id}', [PetController::class, 'update'])->middleware(['auth:sanctum', 'admin']);
 Route::delete('pets/{pet}', [PetController::class, 'destroy'])->middleware(['auth:sanctum', 'admin']);
 
-// Route::resource('pets', PetController::class)
-//     ->only(['index', 'store', 'show', 'update', 'destroy'])
-//     ->middleware(['auth:sanctum', 'admin']);
-
+Route::post('pets/booking', [BookingController::class, 'store'])->middleware(['auth:sanctum']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);

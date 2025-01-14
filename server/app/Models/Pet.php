@@ -11,4 +11,9 @@ class Pet extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'description', 'type', 'image', 'image_public_id'];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }
