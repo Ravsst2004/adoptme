@@ -121,4 +121,22 @@ class BookingController extends Controller
             ], 500);
         }
     }
+
+    public function destroy(Booking $booking)
+    {
+        try {
+            $booking->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Booking deleted successfully',
+                'data' => $booking
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting booking: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to delete booking'
+            ], 500);
+        }
+    }
 }

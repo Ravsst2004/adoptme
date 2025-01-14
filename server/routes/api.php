@@ -14,6 +14,7 @@ Route::delete('pets/{pet}', [PetController::class, 'destroy'])->middleware(['aut
 
 Route::get('booking', [BookingController::class, 'show'])->middleware(['auth:sanctum']);
 Route::post('booking', [BookingController::class, 'store'])->middleware(['auth:sanctum']);
+Route::delete('booking/{booking}', [BookingController::class, 'destroy'])->middleware(['auth:sanctum']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
