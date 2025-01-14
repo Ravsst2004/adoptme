@@ -6,6 +6,10 @@ public class User {
     private String email;
     private int is_admin;
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

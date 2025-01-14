@@ -1,5 +1,6 @@
 package com.example.client.api;
 
+import com.example.client.model.Booking;
 import com.example.client.model.Login;
 import com.example.client.model.Pet;
 import com.example.client.model.Register;
@@ -61,5 +62,13 @@ public interface ApiService {
             @Part("email") RequestBody email,
             @Part("password") RequestBody password
     );
+
+    @Multipart
+    @POST("pets/booking")
+    Call<Booking> bookingPet(
+            @Part("pet_id") RequestBody petId,
+            @Part("user_id") RequestBody userId
+    );
+
 
 }

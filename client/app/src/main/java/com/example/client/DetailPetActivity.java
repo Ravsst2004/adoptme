@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,9 +18,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.client.api.ApiService;
 import com.example.client.api.RetrofitInstance;
+import com.example.client.model.Booking;
 import com.example.client.model.Pet;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +32,7 @@ public class DetailPetActivity extends AppCompatActivity {
     private TextView petName, petDescription, petType;
     private ImageView petImage;
     private ApiService apiService;
+    private Button btnBookPet;
     FloatingActionButton fabAddPet, fabProfile, fabLogout;
 
 
@@ -36,6 +41,7 @@ public class DetailPetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        int userId = prefs.getInt("userId", 0);
         boolean isAdmin = prefs.getBoolean("isAdmin", false);
         String isToken = prefs.getString("token", null);
         if (!prefs.contains("token")) {
@@ -60,6 +66,7 @@ public class DetailPetActivity extends AppCompatActivity {
         fabAddPet = findViewById(R.id.fabAddPet);
         fabProfile = findViewById(R.id.fabProfile);
         fabLogout = findViewById(R.id.fabLogout);
+        btnBookPet = findViewById(R.id.btnBookPet);
 
         apiService = RetrofitInstance.getService(this);
 
@@ -104,6 +111,13 @@ public class DetailPetActivity extends AppCompatActivity {
             }
         });
 
+        btnBookPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bookingPet(petId, userId);
+            }
+        });
+
     }
 
     private void getPetDetails(int petId) {
@@ -127,6 +141,30 @@ public class DetailPetActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Pet> call, Throwable t) {
+                Toast.makeText(DetailPetActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void bookingPet(int petId, int userId) {
+        RequestBody petIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(petId));
+        RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(userId));
+
+        Call<Booking> call = apiService.bookingPet(petIdBody, userIdBody);
+        call.enqueue(new Callback<Booking>() {
+            @Override
+            public void onResponse(Call<Booking> call, Response<Booking> response) {
+                Booking booking = response.body();
+
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    Toast.makeText(DetailPetActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailPetActivity.this, "Booking failed! " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Booking> call, Throwable t) {
                 Toast.makeText(DetailPetActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
