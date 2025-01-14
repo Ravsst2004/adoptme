@@ -147,9 +147,6 @@ public class DetailPetActivity extends AppCompatActivity {
                             btnBookPet.setVisibility(View.GONE);
                             btnBooked.setVisibility(View.GONE);
                         }
-                    } else {
-                        btnBookPet.setVisibility(View.VISIBLE);
-                        btnBooked.setVisibility(View.GONE);
                     }
                 }else {
                     btnBookPet.setVisibility(View.GONE);
