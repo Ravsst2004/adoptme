@@ -164,9 +164,6 @@ public class DetailPetActivity extends AppCompatActivity {
         });
     }
 
-
-
-
     private void getPetDetails(int petId) {
         Call<Pet> call = apiService.getPet(petId);
         call.enqueue(new Callback<Pet>() {
