@@ -10,7 +10,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with('user', 'pet')->where('status', 'active')->get();
+        $bookings = Booking::with('user', 'pet')->get();
         return response()->json([
             'status' => true,
             'message' => 'Bookings retrieved successfully.',
@@ -145,6 +145,30 @@ class BookingController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to delete booking'
+            ], 500);
+        }
+    }
+
+    public function updateStatus($id)
+    {
+        try {
+            // Mencari booking berdasarkan ID
+            $booking = Booking::findOrFail($id);
+
+            // Mengupdate status booking
+            $booking->status = 'completed';
+            $booking->save(); // Simpan perubahan
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Booking status updated successfully',
+                'data' => $booking // Mengembalikan objek booking yang diperbarui
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating booking status: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to update booking status'
             ], 500);
         }
     }

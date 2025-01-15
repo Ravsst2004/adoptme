@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('users/{id}', [UserController::class, 'show']);
@@ -18,6 +17,7 @@ Route::delete('pets/{pet}', [PetController::class, 'destroy'])->middleware(['aut
 Route::get('bookings', [BookingController::class, 'index'])->middleware(['auth:sanctum', 'admin']);
 Route::get('booking', [BookingController::class, 'show'])->middleware(['auth:sanctum']);
 Route::post('booking', [BookingController::class, 'store'])->middleware(['auth:sanctum']);
+Route::put('booking/{id}/status', [BookingController::class, 'updateStatus'])->middleware(['auth:sanctum', 'admin']);
 Route::delete('booking/{booking}', [BookingController::class, 'destroy'])->middleware(['auth:sanctum']);
 
 Route::post('register', [AuthController::class, 'register']);
