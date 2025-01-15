@@ -1,5 +1,6 @@
 package com.example.client;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -121,10 +122,21 @@ public class DetailPetActivity extends AppCompatActivity {
         btnBookPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bookingPet(petId, userId);
-                getBookedPet(userId, petId, isToken);
+                new AlertDialog.Builder(DetailPetActivity.this)
+                        .setTitle("Booking Confirmation")
+                        .setMessage("Are you sure you want to book this pet?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            bookingPet(petId, userId);
+                            getBookedPet(userId, petId, isToken);
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .setCancelable(true)
+                        .show();
             }
         });
+
 
     }
 

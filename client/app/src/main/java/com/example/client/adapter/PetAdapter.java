@@ -1,5 +1,6 @@
 package com.example.client.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import retrofit2.Call;
@@ -85,10 +86,20 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
         holder.btnDeletePet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         holder.btnDeletePet.setOnClickListener(v -> {
-            holder.btnDeletePet.setVisibility(View.GONE);
-            holder.progressBarDelete.setVisibility(View.VISIBLE);
+            new AlertDialog.Builder(holder.itemView.getContext())
+                    .setTitle("Delete Confirmation")
+                    .setMessage("Are you sure you want to delete this pet?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        holder.btnDeletePet.setVisibility(View.GONE);
+                        holder.progressBarDelete.setVisibility(View.VISIBLE);
 
-            deletePet(pet.getId(), holder);
+                        deletePet(pet.getId(), holder);
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setCancelable(true)
+                    .show();
         });
 
         holder.btnSeeDetail.setOnClickListener(v -> {

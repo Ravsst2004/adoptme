@@ -1,5 +1,6 @@
 package com.example.client;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -108,9 +109,20 @@ public class ProfileActivity extends AppCompatActivity {
         btnDeleteBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchBookingAndDeletePet(userId, isToken);
+                new AlertDialog.Builder(ProfileActivity.this)
+                        .setTitle("Delete Confirmation")
+                        .setMessage("Are you sure you want to delete this pet?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            fetchBookingAndDeletePet(userId, isToken);
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .setCancelable(true)
+                        .show();
             }
         });
+
     }
 
     private void fetchBookingAndDeletePet(int userId, String token) {
