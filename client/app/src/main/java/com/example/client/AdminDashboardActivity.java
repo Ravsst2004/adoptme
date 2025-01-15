@@ -1,6 +1,7 @@
 package com.example.client;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -27,12 +28,23 @@ import retrofit2.Response;
 public class AdminDashboardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ApiService apiService;
-    private FloatingActionButton fabHome;
+    private FloatingActionButton fabHome, fabLogout, fabAddPet;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        String isToken = prefs.getString("token", null);
+        if (!isAdmin && !isToken.equals("admin")) {
+            Intent intent = new Intent(AdminDashboardActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -42,6 +54,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         fabHome = findViewById(R.id.fabHome);
+        fabLogout = findViewById(R.id.fabLogout);
+        fabAddPet = findViewById(R.id.fabAddPet);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,6 +71,27 @@ public class AdminDashboardActivity extends AppCompatActivity {
             }
         });
 
+        fabAddPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminDashboardActivity.this, AddPetActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        fabLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(AdminDashboardActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -65,7 +100,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void loadBookings() {
+    public void loadBookings() {
         String token = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("token", null);
 
         swipeRefreshLayout.setRefreshing(true);

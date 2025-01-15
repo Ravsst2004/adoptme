@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
                 Booking::factory()->create([
                     'user_id' => $user->id,
                     'pet_id' => $pet->id,
-                    'status' => rand(0, 1) ? 'active' : 'canceled',
+                    'status' => 'active',
                 ]);
             }
         }

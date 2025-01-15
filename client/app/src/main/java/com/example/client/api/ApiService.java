@@ -89,4 +89,9 @@ public interface ApiService {
             @Header("Authorization") String token
     );
 
+    @POST("booking/{id}/status?_method=PUT")
+    Call<Booking> updateStatusBooking(
+            @Path("id") int bookingId
+    );
+
 }

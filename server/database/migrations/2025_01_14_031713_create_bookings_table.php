@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
-            $table->enum('status', ['active', 'canceled', 'completed'])->default('active');
+            $table->enum('status', ['active', 'completed'])->default('active');
             $table->unique(['user_id', 'pet_id']);
             $table->unique('pet_id');
             $table->timestamps();
