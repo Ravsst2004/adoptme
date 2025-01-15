@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Pet::factory(10)->create();
+        // Pet::factory(10)->create();
         User::factory(5)->create();
 
         User::factory()->create([
@@ -35,15 +35,15 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ]);
 
-        $pets = Pet::all();
-        foreach ($pets as $pet) {
-            if (rand(0, 1)) {
-                Booking::factory()->create([
-                    'user_id' => $user->id,
-                    'pet_id' => $pet->id,
-                    'status' => 'active',
-                ]);
-            }
-        }
+        // $pets = Pet::all();
+        // foreach ($pets as $pet) {
+        //     if (rand(0, 1)) {
+        //         Booking::factory()->create([
+        //             'user_id' => $user->id,
+        //             'pet_id' => $pet->id,
+        //             'status' => 'active',
+        //         ]);
+        //     }
+        // }
     }
 }

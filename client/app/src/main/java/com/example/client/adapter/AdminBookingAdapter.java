@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,16 +66,22 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
                 .into(holder.ivPetImage);
 
         holder.btnStatusDone.setOnClickListener(view -> {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.btnStatusDone.setVisibility(View.GONE);
+
             new AlertDialog.Builder(context)
                     .setTitle("Update Status Confirmation")
                     .setMessage("Are you sure you want to update the status?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         apiService.updateStatusBooking(booking.getId()).enqueue(new Callback<Booking>() {
+
                             @Override
                             public void onResponse(Call<Booking> call, Response<Booking> response) {
                                 if (response.isSuccessful() && response.body() != null) {
                                     holder.tvStatus.setText("Status: " + response.body().getData().getStatus());
                                     Toast.makeText(context, "Pet already done", Toast.LENGTH_SHORT).show();
+                                    holder.progressBar.setVisibility(View.GONE);
+                                    holder.btnStatusDone.setVisibility(View.VISIBLE);
                                     adminDashboardActivity.loadBookings();
                                 } else {
                                     Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
@@ -83,11 +90,15 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
 
                             @Override
                             public void onFailure(Call<Booking> call, Throwable t) {
+                                holder.progressBar.setVisibility(View.GONE);
+                                holder.btnStatusDone.setVisibility(View.VISIBLE);
                                 Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     })
                     .setNegativeButton("No", (dialog, which) -> {
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.btnStatusDone.setVisibility(View.VISIBLE);
                         dialog.dismiss();
                     })
                     .setCancelable(true)
@@ -104,6 +115,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         TextView tvBookingId, tvUserName, tvUserEmail, tvPetName, tvPetType, tvStatus;
         ImageView ivPetImage;
         Button btnStatusDone;
+        ProgressBar progressBar;
 
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,6 +127,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
             tvStatus = itemView.findViewById(R.id.tvStatus);
             ivPetImage = itemView.findViewById(R.id.ivPetImage);
             btnStatusDone = itemView.findViewById(R.id.btnStatusDone);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }
