@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
+    public function index()
+    {
+        $bookings = Booking::with('user', 'pet')->where('status', 'active')->get();
+        return response()->json([
+            'status' => true,
+            'message' => 'Bookings retrieved successfully.',
+            'data' => $bookings,
+        ]);
+    }
 
     public function show(Request $request)
     {

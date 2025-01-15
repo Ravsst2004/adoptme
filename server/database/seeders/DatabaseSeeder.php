@@ -35,15 +35,15 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ]);
 
-        // $pets = Pet::all();
-        // foreach ($pets as $pet) {
-        //     if (rand(0, 1)) {
-        //         Booking::factory()->create([
-        //             'user_id' => $user->id,
-        //             'pet_id' => $pet->id,
-        //             'status' => rand(0, 1) ? 'active' : 'canceled',
-        //         ]);
-        //     }
-        // }
+        $pets = Pet::all();
+        foreach ($pets as $pet) {
+            if (rand(0, 1)) {
+                Booking::factory()->create([
+                    'user_id' => $user->id,
+                    'pet_id' => $pet->id,
+                    'status' => rand(0, 1) ? 'active' : 'canceled',
+                ]);
+            }
+        }
     }
 }
