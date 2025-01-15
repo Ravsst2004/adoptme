@@ -183,7 +183,16 @@ public class ProfileActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     Booking booking = response.body();
                     int petId = booking.getData().getPet_id();
-                    fetchPetDetails(petId);
+                    String status = booking.getData().getStatus();
+                    Log.d("Status", status);
+                    if (status.equals("active")) {
+                        llCardBookedPet.setVisibility(View.VISIBLE);
+                        fetchPetDetails(petId);
+                    } else {
+                        llCardBookedPet.setVisibility(View.GONE);
+                        clearPetDetails();
+                    }
+
                 } else {
                     llCardBookedPet.setVisibility(View.GONE);
                     clearPetDetails();

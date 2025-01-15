@@ -69,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // Clear previous errors
         etEmail.setError(null);
         etPassword.setError(null);
 
