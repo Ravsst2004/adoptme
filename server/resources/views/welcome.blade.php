@@ -908,11 +908,12 @@
 
 <body class="font-sans antialiased dark:bg-black dark:text-white/50">
     <div>
-        <img src="{{ $pet->image }}" alt="{{ $pet->name }}">
+        {{-- <img src="{{ $pet->image }}" alt="{{ $pet->name }}"> --}}
 
-        <form action="{{ route('pets.destroy') }}">
+        {{-- <form action="{{ route('pets.destroy') }}">
             <button type="submit">Delete</button>
-        </form>
+        </form> --}}
+        <h1>LOL</h1>
     </div>
 </body>
 
