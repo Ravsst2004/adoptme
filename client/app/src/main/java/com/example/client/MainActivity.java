@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Pet> petList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    FloatingActionButton fabAddPet, fabProfile, fabLogout;
+    FloatingActionButton fabAddPet, fabProfile, fabLogout, fabAdminDashboard;
     TextInputEditText editTextSearch;
 
     @Override
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         fabAddPet = findViewById(R.id.fabAddPet);
         fabProfile = findViewById(R.id.fabProfile);
         fabLogout = findViewById(R.id.fabLogout);
+        fabAdminDashboard = findViewById(R.id.fabAdminDashboard);
         editTextSearch = findViewById(R.id.editTextSearch);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         fabAddPet.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         fabProfile.setVisibility(!isAdmin && isToken != null ? View.VISIBLE : View.GONE);
         fabLogout.setVisibility(isAdmin && isToken != null ? View.VISIBLE : View.GONE);
+        fabAdminDashboard.setVisibility(isAdmin && isToken != null ? View.VISIBLE : View.GONE);
 
 
         fabAddPet.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        fabAdminDashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+                startActivity(intent);
             }
         });
 

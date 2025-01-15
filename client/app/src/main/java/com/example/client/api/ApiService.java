@@ -1,10 +1,12 @@
 package com.example.client.api;
 
 import com.example.client.model.Booking;
+import com.example.client.model.Bookings;
 import com.example.client.model.Login;
 import com.example.client.model.Pet;
 import com.example.client.model.Register;
 import com.example.client.model.Result;
+import com.example.client.model.User;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -80,6 +82,11 @@ public interface ApiService {
     @DELETE("booking/{bookingId}")
     Call<Void> deleteBooking(
             @Path("bookingId") int bookingId
+    );
+
+    @GET("bookings")
+    Call<Bookings> getBookings(
+            @Header("Authorization") String token
     );
 
 }

@@ -68,6 +68,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@android:color/white" />
 
+    <!-- Floating Action Button: Admin Dashboard -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdminDashboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Logout"
+        android:src="@drawable/icon_admin_dashboard"
+        android:backgroundTint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@android:color/white" />
+
+
     <!-- Floating Action Button: Logout -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabLogout"
