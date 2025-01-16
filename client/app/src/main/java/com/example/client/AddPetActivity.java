@@ -1,6 +1,7 @@
 package com.example.client;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.example.client.api.ApiService;
 import com.example.client.api.RetrofitInstance;
 import com.example.client.model.Pet;
 import com.example.client.model.Result;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 
@@ -46,6 +48,7 @@ public class AddPetActivity extends AppCompatActivity {
     private Button btnChooseImage, btnSavePet;
     private Uri selectedImageUri;
     private ProgressBar progressBar;
+    private FloatingActionButton fabHome, fabLogout;
 
     private ApiService apiService;
 
@@ -53,9 +56,19 @@ public class AddPetActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("isAdmin", false);
+        if (!prefs.contains("token") && !isAdmin) {
+            Intent intent = new Intent(AddPetActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_pet);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addPetActivity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -68,12 +81,35 @@ public class AddPetActivity extends AppCompatActivity {
         btnChooseImage = findViewById(R.id.btnChooseImage);
         btnSavePet = findViewById(R.id.btnSavePet);
         progressBar = findViewById(R.id.progressBar);
+        fabHome = findViewById(R.id.fabHome);
+        fabLogout = findViewById(R.id.fabLogout);
 
         apiService = RetrofitInstance.getService(this);
 
         btnChooseImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, IMAGE_PICK_REQUEST);
+        });
+
+        fabHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddPetActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        fabLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(AddPetActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
         });
 
         btnSavePet.setOnClickListener(v -> savePet());
