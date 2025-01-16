@@ -78,8 +78,8 @@ public class DetailPetActivity extends AppCompatActivity {
 
         int petId = getIntent().getIntExtra("petId", -1);
         if (petId != -1) {
-            getPetDetails(petId);
             getBookedPet(userId, petId, isToken);
+            getPetDetails(petId);
         } else {
             Toast.makeText(this, "Invalid Pet ID", Toast.LENGTH_SHORT).show();
             finish();
@@ -150,9 +150,8 @@ public class DetailPetActivity extends AppCompatActivity {
 
                     if (booking.getData() != null) {
                         int bookedPetId = booking.getData().getPet_id();
-                        int currentPetId = petId;
 
-                        if (bookedPetId == currentPetId) {
+                        if (bookedPetId == petId) {
                             btnBookPet.setVisibility(View.GONE);
                             btnBooked.setVisibility(View.VISIBLE);
                         } else {
